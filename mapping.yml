@@ -1,0 +1,201 @@
+# Map OBD values to tree
+
+SPEED:
+  targets: 
+    - Vehicle.Drivetrain.Transmission.Speed
+    - Vehicle.Speed
+    - Vehicle.OBD.Speed
+  unit:
+    - kph
+
+ENGINE_LOAD:
+  targets:
+    - Vehicle.OBD.EngineLoad
+  unit:
+    - percent
+
+ABSOLUTE_LOAD:
+  target:
+    - Vehicle.OBD.AbsoluteLoad
+  unit:
+    - percent
+
+RPM:
+  targets:
+    - Vehicle.OBD.EngineSpeed
+  unit:
+    - rpm
+
+MAF:
+  targets:
+    - Vehicle.OBD.MAF
+  unit:
+    - grams_per_second
+
+MAX_MAF:
+  targets:
+    - Vehicle.OBD.MaxMAF
+  unit:
+    - grams_per_second
+
+THROTTLE_POS:
+  targets:
+    - Vehicle.OBD.ThrottlePosition
+  unit:
+    - percent
+
+THROTTLE_POS_B:
+  targets:
+    - Vehicle.OBD.ThrottlePositionB
+  unit:
+    - percent
+
+THROTTLE_POS_C:
+  targets:
+    - Vehicle.OBD.ThrottlePositionC
+  unit:
+    - percent
+
+ACCELERATOR_POS_D:
+  targets:
+    - Vehicle.OBD.AcceleratorPositionD
+  unit:
+    - percent
+
+ACCELERATOR_POS_E:
+  targets:
+    - Vehicle.OBD.AcceleratorPositionE
+  unit:
+    - percent
+
+ACCELERATOR_POS_F:
+  targets:
+    - Vehicle.OBD.AcceleratorPositionF
+  unit:
+    - percent
+
+O2_B1S1:
+  targets:
+    - Vehicle.OBD.O2.Bank1.Sensor1.Voltage
+  unit:
+    - volt
+
+O2_B1S2:
+  targets:
+    - Vehicle.OBD.O2.Bank1.Sensor2.Voltage 
+  unit:
+    - volt
+
+O2_B1S3:
+  targets:
+    - Vehicle.OBD.O2.Bank1.Sensor3.Voltage 
+  unit:
+    - volt
+
+O2_B1S4:
+  targets:
+    - Vehicle.OBD.O2.Bank1.Sensor4.Voltage 
+  unit:
+    - volt
+
+O2_B2S1:
+  targets:
+    - Vehicle.OBD.O2.Bank1.Sensor1.Voltage 
+  unit:
+    - volt
+
+O2_B2S2:
+  targets:
+    - Vehicle.OBD.O2.Bank1.Sensor2.Voltage 
+  unit:
+    - volt
+
+O2_B2S3:
+  targets:
+    - Vehicle.OBD.O2.Bank1.Sensor3.Voltage 
+  unit:
+    - volt
+
+O2_B2S4:
+  targets:
+    - Vehicle.OBD.O2.Bank1.Sensor4.Voltage 
+  unit:
+    - volt
+
+DISTANCE_W_MIL:
+  targets:
+    - Vehicle.OBD.DistanceWithMIL
+  unit:
+    - kilometer
+
+RUN_TIME:
+  targets:
+    -Vehicle.OBD.RunTime
+  unit:
+    - second
+
+RUN_TIME_MIL:
+  targets:
+    -Vehicle.OBD.RunTimeMIL
+  unit:
+    - minute 
+
+COMMANDED_EGR:
+  targets:
+    - Vehicle.OBD.CommandedEGR
+  unit:
+    - percent
+
+EGR_ERROR:
+  targets:
+    - Vehicle.OBD.EGR_ERROR
+  unit:
+    - percent
+
+FUEL_LEVEL:
+  targets:
+    - Vehicle.OBD.FuelLevel
+  unit:
+    - percent
+
+WARMUPS_SINCE_DTC_CLEAR:
+  targets:
+    - Vehicle.OBD.WarmupsSinceDTCClear
+  unit:
+    - count
+
+DISTANCE_SINCE_DTC_CLEAR:
+  targets:
+    - Vehicle.OBD.DistanceSinceDTCClear
+  unit:
+    - kilometer
+
+TIME_SINCE_DTC_CLEAR:
+  targets:
+    - Vehicle.OBD.TimeSinceDTCClear
+  unit:
+    - minute 
+
+AMBIANT_AIR_TEMP:
+  target:
+    - Vehicle.OBD.AMBIANT_AIR_TEMP
+  unit:
+    - celsius
+
+OIL_TEMP:
+  target:
+    - Vehicle.OBD.OilTemperature
+  unit:
+    - celsius
+
+INTAKE_TEMP:
+  target:
+    - Vehicle.OBD.IntakeTemp
+  unit:
+    - celsius
+
+COOLANT_TEMP:
+  targets:
+    - Vehicle.OBD.CoolantTemperature
+  unit:
+    - celsius
