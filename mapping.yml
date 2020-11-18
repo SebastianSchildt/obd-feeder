@@ -130,13 +130,13 @@ DISTANCE_W_MIL:
 
 RUN_TIME:
   targets:
-    -Vehicle.OBD.RunTime
+    - Vehicle.OBD.RunTime
   unit:
     - second
 
 RUN_TIME_MIL:
   targets:
-    -Vehicle.OBD.RunTimeMIL
+    - Vehicle.OBD.RunTimeMIL
   unit:
     - minute 
 
@@ -178,7 +178,7 @@ TIME_SINCE_DTC_CLEARED:
 
 AMBIANT_AIR_TEMP:
   targets:
-    - Vehicle.OBD.AMBIANT_AIR_TEMP
+    - Vehicle.OBD.AmbientAirTemperature
   unit:
     - celsius
 
