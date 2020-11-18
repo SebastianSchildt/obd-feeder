@@ -148,7 +148,7 @@ COMMANDED_EGR:
 
 EGR_ERROR:
   targets:
-    - Vehicle.OBD.EGR_ERROR
+    - Vehicle.OBD.EGRError
   unit:
     - percent
 
