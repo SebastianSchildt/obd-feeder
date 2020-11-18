@@ -15,7 +15,7 @@ ENGINE_LOAD:
     - percent
 
 ABSOLUTE_LOAD:
-  target:
+  targets:
     - Vehicle.OBD.AbsoluteLoad
   unit:
     - percent
@@ -170,26 +170,26 @@ DISTANCE_SINCE_DTC_CLEAR:
   unit:
     - kilometer
 
-TIME_SINCE_DTC_CLEAR:
+TIME_SINCE_DTC_CLEARED:
   targets:
     - Vehicle.OBD.TimeSinceDTCClear
   unit:
     - minute 
 
 AMBIANT_AIR_TEMP:
-  target:
+  targets:
     - Vehicle.OBD.AMBIANT_AIR_TEMP
   unit:
     - celsius
 
 OIL_TEMP:
-  target:
+  targets:
     - Vehicle.OBD.OilTemperature
   unit:
     - celsius
 
 INTAKE_TEMP:
-  target:
+  targets:
     - Vehicle.OBD.IntakeTemp
   unit:
     - celsius
