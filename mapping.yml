@@ -172,7 +172,7 @@ DISTANCE_SINCE_DTC_CLEAR:
 
 TIME_SINCE_DTC_CLEARED:
   targets:
-    - Vehicle.OBD.TimeSinceDTCClear
+    - Vehicle.OBD.TimeSinceDTCCleared
   unit:
     - minute 
 
