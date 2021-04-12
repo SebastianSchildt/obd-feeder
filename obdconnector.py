@@ -13,18 +13,17 @@
 import obd 
 import sys
 
-
 def openOBD(port, baudrate):
-	print("Opening OBD port and testing connection")
-	con = obd.OBD(port,baudrate=baudrate)
-	#response=con.query(obd.commands.SPEED)
-	response=con.query(obd.commands['SPEED'])
+    print("Opening OBD port and testing connection")
+    con = obd.OBD(port,baudrate=baudrate)
+    #response=con.query(obd.commands.SPEED)
+    response=con.query(obd.commands['SPEED'])
 
-	if  response.is_null():
-		print("Error commnunicating with OBD, check baudrate and device settings")
-		sys.exit(-1)
-	print("OBD connection established")
-	return con
+    if  response.is_null():
+        print("Error commnunicating with OBD, check baudrate and device settings")
+        sys.exit(-1)
+    print("OBD connection established")
+    return con
 
 
 def collectData(mapping, obdcon):
