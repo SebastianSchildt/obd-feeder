@@ -12,7 +12,7 @@
 
 import configparser
 import sys, os
-import time
+import time, threading
 
 import obdconnector as obdC
 import obd2vssmapper
@@ -22,7 +22,7 @@ scriptDir= os.path.dirname(os.path.realpath(__file__))
 
 class OBD_Client():
     def __init__(self, config):
-        print("Init gpsd client...")
+        print("Init obd client...")
         if "obd" not in config:
             print("obd section missing from configuration, exiting")
             sys.exit(-1)
@@ -32,10 +32,10 @@ class OBD_Client():
         self.vssClient.authorize()
         self.cfg = {}
         provider_config=config['obd']
-        self.cfg['timeout'] = provider_config.get('timeout', 1)
-        self.cfg['baudrate'] = provider_config.get('baudrate', 2000000) 
+        self.cfg['timeout'] = provider_config.getint('timeout', 1)
+        self.cfg['baudrate'] = provider_config.getint('baudrate', 2000000) 
         self.cfg['device'] = provider_config.get('device','/dev/ttyAMA0')
-        self.cfg['mapping'] = provider_config.getint('mapping', os.path.join(scriptDir, 'mapping.yml'))
+        self.cfg['mapping'] = provider_config.get('mapping', os.path.join(scriptDir, 'mapping.yml'))
         print("Configuration")
         print("Device       : {}".format(self.cfg['device']))
         print("Baudrate     : {} baud".format(self.cfg['baudrate']))
@@ -82,7 +82,7 @@ class OBD_Client():
 
 if __name__ == "__main__":
     print("kuksa.val OBD example feeder")
-    config_candidates=['/config/gpsd_feeder.ini', '/etc/gpsd_feeder.ini', os.path.join(scriptDir, 'config/gpsd_feeder.ini')]
+    config_candidates=['/config/obdfeeder.ini', '/etc/obdfeeder.ini', os.path.join(scriptDir, 'config/obdfeeder.ini')]
     for candidate in config_candidates:
         if os.path.isfile(candidate):
             configfile=candidate
