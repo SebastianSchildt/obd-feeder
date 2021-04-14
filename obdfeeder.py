@@ -48,22 +48,22 @@ class OBD_Client():
         self.connection = obdC.openOBD(self.cfg['device'], self.cfg['baudrate'])
         self.thread.start()
 
-    def publishData():
+    def publishData(self):
         print("Publish data")
-        for obdval,config in mapping.map():
+        for obdval,config in self.mapping.map():
             
                 if config['value'] is None:
                     continue
                 print("Publish {}: to ".format(obdval), end='')
                 for path in config['targets']:
-                    self.vssclient.setValue(path, config['value'].magnitude)
+                    self.vssClient.setValue(path, config['value'].magnitude)
                     print(path, end=' ')
                 print("")
 
     def loop(self):
         print("obd loop started")
         while True:
-            obdC.collectData(mapping, self.connection)
+            obdC.collectData(self.mapping, self.connection)
             self.publishData()
         #    response=connection.query(cmd)
         #    if not response.is_null():
