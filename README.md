@@ -11,5 +11,5 @@ docker build -t obd_feeder .
 
 To run:
 ```
-docker run -it -v $PWD/config:/config obd_feeder
+docker run -it -v $PWD/config:/config --device /dev/ttyAMA0 obd_feeder
 ```
