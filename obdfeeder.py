@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
 ########################################################################
 # Copyright (c) 2020 Robert Bosch GmbH
@@ -10,88 +10,96 @@
 # SPDX-License-Identifier: EPL-2.0
 ########################################################################
 
-
-
-
-import argparse
-import sys
-import time
+import configparser
+import sys, os
+import time, threading
 
 import obdconnector as obdC
 import obd2vssmapper
-import websocketconnector
-import yaml
+from kuksa_viss_client import KuksaClientThread
 
-cfg={}
-cfg['TIMEOUT']=60
+scriptDir= os.path.dirname(os.path.realpath(__file__))
 
-
-
-def getConfig():
-	global cfg
-	parser = argparse.ArgumentParser()
-	parser.add_argument("-t", "--timeout",  default=1, help="Timeout between read cylces", type=int)
-	parser.add_argument("-b", "--baudrate", default=2000000, help="Baudrate to ELM", type=int)
-	parser.add_argument("-d", "--device",   default="/dev/ttyAMA0", help="Serial port for ELM connection", type=str)
-	parser.add_argument("-s", "--server",   default="ws://localhost:8090", help="VSS server", type=str)
-	parser.add_argument("-j", "--jwt",   default="jwt.token", help="JWT security token", type=str)
-	parser.add_argument("--mapping",   default="mapping.yml", help="VSS mapping", type=str)
-	
-	args=parser.parse_args()
-	cfg['TIMEOUT']=args.timeout
-	cfg['baudrate']=args.baudrate
-	cfg['device']=args.device
-	cfg['mapping']=args.mapping
-	cfg['jwtfile']=args.jwt
-	cfg['server']=args.server
-
-               
-
-
-def publishData(vss):
-	print("Publish data")
-	for obdval,config in mapping.map():
-		
-		if config['value'] is None:
-			continue
-		print("Publish {}: to ".format(obdval), end='')
-		for path in config['targets']:
-			vss.push(path, config['value'].magnitude)
-			print(path, end=' ')
-		print("")
+class OBD_Client():
+    def __init__(self, config):
+        print("Init obd client...")
+        if "obd" not in config:
+            print("obd section missing from configuration, exiting")
+            sys.exit(-1)
         
+        self.vssClient = KuksaClientThread(config['kuksa_val'])
+        self.vssClient.start()
+        self.vssClient.authorize()
+        self.cfg = {}
+        provider_config=config['obd']
+        self.cfg['timeout'] = provider_config.getint('timeout', 1)
+        self.cfg['baudrate'] = provider_config.getint('baudrate', 2000000) 
+        self.cfg['device'] = provider_config.get('device','/dev/ttyAMA0')
+        self.cfg['mapping'] = provider_config.get('mapping', os.path.join(scriptDir, 'mapping.yml'))
+        print("Configuration")
+        print("Device       : {}".format(self.cfg['device']))
+        print("Baudrate     : {} baud".format(self.cfg['baudrate']))
+        print("Timeout      : {} s".format(self.cfg['timeout']))
+        print("Mapping file : {}".format(self.cfg['mapping']))
+
+        self.mapping=obd2vssmapper.mapper(self.cfg['mapping'])
+
+        self.thread = threading.Thread(target=self.loop, args=())
+        self.connection = obdC.openOBD(self.cfg['device'], self.cfg['baudrate'])
+        self.thread.start()
+
+    def publishData(self):
+        print("Publish data")
+        for obdval,config in self.mapping.map():
+            
+                if config['value'] is None:
+                    continue
+                print("Publish {}: to ".format(obdval), end='')
+                for path in config['targets']:
+                    self.vssClient.setValue(path, config['value'].magnitude)
+                    print(path, end=' ')
+                print("")
+
+    def loop(self):
+        print("obd loop started")
+        while True:
+            obdC.collectData(self.mapping, self.connection)
+            self.publishData()
+        #    response=connection.query(cmd)
+        #    if not response.is_null():
+        #        print("Speed is {}, or {} ".format(response.value,response.value.to("mph")))
+        #    else:
+        #        print("No data from car. Are you connected to OBD? Is your STN set to 2Mbit baudrate?")
+        #    print("Have you started porting VRTE to me?\n")
+            time.sleep(self.cfg['timeout'])
 
 
-print("kuksa.val OBD example feeder")
-getConfig()
-print("Configuration")
-print("Device       : {}".format(cfg['device']))
-print("Baudrate     : {} baud".format(cfg['baudrate']))
-print("Timeout      : {} s".format(cfg['TIMEOUT']))
-print("Mapping file : {}".format(cfg['mapping']))
-print("VSS server   : {}".format(cfg['server']))
-print("JWT token    : {}".format(cfg['jwtfile']))
+    def shutdown(self):
+        self.running=False
+        self.thread.join()
+        self.vssClient.stop()
 
 
+if __name__ == "__main__":
+    print("kuksa.val OBD example feeder")
+    config_candidates=['/config/obdfeeder.ini', '/etc/obdfeeder.ini', os.path.join(scriptDir, 'config/obdfeeder.ini')]
+    for candidate in config_candidates:
+        if os.path.isfile(candidate):
+            configfile=candidate
+            break
+    if configfile is None:
+        print("No configuration file found. Exiting")
+        sys.exit(-1)
+    print("read config file" + configfile)
+    config = configparser.ConfigParser()
+    config.read(configfile)
+    
+    client = OBD_Client(config)
 
+    def terminationSignalreceived(signalNumber, frame):
+        print("Received termination signal. Shutting down")
+        client.shutdown()
+    signal.signal(signal.SIGINT, terminationSignalreceived)
+    signal.signal(signal.SIGQUIT, terminationSignalreceived)
+    signal.signal(signal.SIGTERM, terminationSignalreceived)
 
-
-with open(cfg['jwtfile'],'r') as f:
-	token=f.read()
-
-mapping=obd2vssmapper.mapper("mapping.yml")
-vss=websocketconnector.vssclient(cfg['server'],token)
-
-connection = obdC.openOBD(cfg['device'],cfg['baudrate'])
-
-
-while True:
-	obdC.collectData(mapping,connection)
-	publishData(vss)
-#	response=connection.query(cmd)
-#	if not response.is_null():
-#		print("Speed is {}, or {} ".format(response.value,response.value.to("mph")))
-#	else:
-#		print("No data from car. Are you connected to OBD? Is your STN set to 2Mbit baudrate?")
-#	print("Have you started porting VRTE to me?\n")
-	time.sleep(cfg['TIMEOUT'])
